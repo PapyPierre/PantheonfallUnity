@@ -15,13 +15,8 @@ MonoBehaviour:
   m_GroupName: EntityData
   m_GUID: 76ccb9bca37374443ad45f831627829e
   m_SerializeEntries:
-  - m_GUID: 4ce663472bc278340ace9436dea8fe49
-    m_Address: EnemyTest_Data
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: bcf877f3a761d6543bb58e7e5d9a5e42
-    m_Address: Player_Data
+  - m_GUID: 75dff6625e150fb48b5ce7d42e1d6c89
+    m_Address: Polyphemus_Data
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Core.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,6 +8,10 @@ namespace Core
     public class GameManager : MonoBehaviour
     {
         public static GameManager instance;
+        
+        [HideInInspector] public FightManager fightManager;
+        [HideInInspector] public UIManager uiManager;
+        [HideInInspector] public Director director;
 
         private readonly List<GameObject> m_dontDestroyOnLoadObjects = new();
         

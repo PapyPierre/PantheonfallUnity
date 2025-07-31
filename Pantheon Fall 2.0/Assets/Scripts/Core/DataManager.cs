@@ -9,43 +9,82 @@ namespace Core
 {
     public static class DataManager
     {
-        private static readonly Dictionary<string, EnemyData> LoadedEnemyData = new();
-        
-        public static EnemyData GetEntityData(string enemyName)
+        private static readonly Dictionary<System.Type, IDictionary<string, object>> LoadedData = new();
+
+        public static T GetData<T>(string dataName) where T : class
         {
-            return LoadedEnemyData.TryGetValue(enemyName, out EnemyData data) ? data : LoadEntityData(enemyName);
+            var type = typeof(T);
+
+            if (!LoadedData.TryGetValue(type, out IDictionary<string, object> dataDict))
+            {
+                dataDict = new Dictionary<string, object>();
+                LoadedData[type] = dataDict;
+            }
+
+            if (dataDict.TryGetValue(dataName, out object data))
+            {
+                return data as T;
+            }
+
+            var loaded = LoadEntityData<T>(dataName);
+            
+            if (loaded != null) dataDict[dataName] = loaded;
+            
+            return loaded;
         }
 
-        private static EnemyData LoadEntityData(string enemyName)
+        private static T LoadEntityData<T>(string dataName) where T : class
         {
-            AsyncOperationHandle<EnemyData> handle = Addressables.LoadAssetAsync<EnemyData>($"{enemyName}_Data");
-
+            string address = $"{dataName}_Data";
+            AsyncOperationHandle<T> handle = Addressables.LoadAssetAsync<T>(address);
             handle.WaitForCompletion();
 
             if (handle.Status == AsyncOperationStatus.Succeeded)
             {
-                EnemyData data = handle.Result;
-                LoadedEnemyData.Add(enemyName, data);
-                return data;
+                return handle.Result;
             }
 
+            Debug.LogWarning($"Failed to load data for {dataName} of type {typeof(T)}");
             return null;
         }
 
-        public static void UnloadEnemyData(string enemyName)
+        public static void UnloadEntityData<T>(string dataName) where T : class
         {
-            Addressables.Release(LoadedEnemyData[enemyName]);
-            LoadedEnemyData.Remove(enemyName);
+            var type = typeof(T);
+
+            if (LoadedData.TryGetValue(type, out IDictionary<string, object> dataDict) && dataDict.TryGetValue(dataName, out object data))
+            {
+                Addressables.Release(data);
+                dataDict.Remove(dataName);
+            }
         }
 
-        public static void UnloadAllEnemyData()
+        public static void UnloadAllEntityData<T>() where T : class
         {
-            foreach (var kvp in LoadedEnemyData)
+            var type = typeof(T);
+
+            if (LoadedData.TryGetValue(type, out IDictionary<string, object> dataDict))
             {
-                Addressables.Release(kvp.Value);
+                foreach (object data in dataDict.Values)
+                {
+                    Addressables.Release(data);
+                }
+
+                dataDict.Clear();
+            }
+        }
+
+        public static void UnloadAllData()
+        {
+            foreach (var kvp in LoadedData)
+            {
+                foreach (var item in kvp.Value.Values)
+                {
+                    Addressables.Release(item);
+                }
             }
 
-            LoadedEnemyData.Clear();
+            LoadedData.Clear();
         }
     }
 
