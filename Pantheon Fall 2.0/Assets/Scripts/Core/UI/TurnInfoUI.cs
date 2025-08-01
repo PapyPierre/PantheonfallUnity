@@ -5,27 +5,37 @@ namespace Core.UI
 {
     public class TurnInfoUI : MonoBehaviour
     {
-        private Director m_lvlManager; 
+        private FightManager m_fightManager; 
             
         [SerializeField] private TextMeshProUGUI turnNumberText;
         [SerializeField] private GameObject[] tickIndicator;
 
         private void Awake()
         {
-            m_lvlManager = GameManager.instance.director;
-            m_lvlManager.TurnPass += OnTurnPass;
-            m_lvlManager.TickExectue += OnTickExecute;
-            
+            m_fightManager = GameManager.instance.fightManager;
+            m_fightManager.TurnPass += OnTurnPass;
+            m_fightManager.TickExecute += OnTickExecute;
+        }
+
+        public void HideAllTurnInfos()
+        {
             foreach (GameObject go in tickIndicator)
             {
                 go.SetActive(false);
             }
+            
+            turnNumberText.gameObject.SetActive(false);
         }
 
         private void OnTurnPass(int turnNumber)
         {
             turnNumberText.text = $"Turn {turnNumber}";
-            tickIndicator[turnNumber % 4].SetActive(true);
+            tickIndicator[m_fightManager.TickNumber -1].SetActive(true);
+        }
+
+        public void EnableTurnNumberText()
+        {
+            turnNumberText.gameObject.SetActive(true);
         }
         
         private void OnTickExecute()

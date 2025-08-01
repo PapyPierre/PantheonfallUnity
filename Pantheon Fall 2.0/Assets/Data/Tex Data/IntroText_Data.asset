@@ -9,15 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6dedf1ec3b45402cb54aaabf54e5bf54, type: 3}
-  m_Name: Strike_Data
+  m_Script: {fileID: 11500000, guid: 38547a5beff440059cedd4d627331bfc, type: 3}
+  m_Name: IntroText_Data
   m_EditorClassIdentifier: 
-  ability: 2
-  speed: 1
-  targets: 1
-  manaCost: 0
-  effects:
-  - effect: 1
-    targetedStat: 1
-    value: -1
-    targetedStatus: 0
+  textsToDisplays:
+  - text: Intro blabla
+    isFinalIntroText: 0
+  - text: Intro blabla 2
+    isFinalIntroText: 1

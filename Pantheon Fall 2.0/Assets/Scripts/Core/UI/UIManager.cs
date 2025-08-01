@@ -18,5 +18,12 @@ namespace Core.UI
             
             GameManager.instance.uiManager = this;
         }
+
+        private void Start()
+        {
+            PlayerStats.HideAllStats();
+            EnemyInfo.HideAllEnemyInfos();
+            TurnInfo.HideAllTurnInfos();
+        }
     }
 }

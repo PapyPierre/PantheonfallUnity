@@ -6,6 +6,8 @@ namespace Core.Entity
     [Serializable]
     public enum EAbilities
     {
+        None,
+        StandBy,
         Strike,
     }
     
@@ -15,20 +17,19 @@ namespace Core.Entity
         public EAbilityEffect effect;
         
         [ShowIf("ModifyStat"), AllowNesting] public EEntityStats targetedStat;
-        [ShowIf("ModifyStat"), AllowNesting] public uint value;
+        [ShowIf("ModifyStat"), AllowNesting] public int value;
         
         [ShowIf("ModifyStatus"), AllowNesting] public EEntityStatus targetedStatus;
 
-        private bool ModifyStat() => effect ==  EAbilityEffect.AddStat || effect == EAbilityEffect.RemoveStat;
-        private bool ModifyStatus() => effect == EAbilityEffect.AddStatus || effect == EAbilityEffect.RemoveStatus;
+        public bool ModifyStat() => effect ==  EAbilityEffect.ModifyStat;
+        public bool ModifyStatus() => effect == EAbilityEffect.AddStatus || effect == EAbilityEffect.RemoveStatus;
     }
 
     [Serializable]
     public enum EAbilityEffect
     {
         None,
-        AddStat,
-        RemoveStat,
+        ModifyStat,
         AddStatus,
         RemoveStatus,
     }
@@ -36,10 +37,8 @@ namespace Core.Entity
     [Serializable]
     public enum EAbilityTarget
     {
-        None,
         Self,
-        Allies,
-        Enemies,
+        Opponent,
         Everyone,
     }
 }

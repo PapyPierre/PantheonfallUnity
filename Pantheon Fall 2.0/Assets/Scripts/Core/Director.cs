@@ -10,37 +10,19 @@ namespace Core
         [SerializeField] private List<Tier> tiersInLevel = new List<Tier>();
         
         private int m_floorNumber;
-        private int m_turnNumber;
-        private int m_tickNumber;
 
-        public Action<int> TurnPass;
-        public Action TickExectue;
+        public Action IntroTextFinished;
 
         private void Awake()
         {
             GameManager.instance.director = this;
+            IntroTextFinished += OnIntroFinished;
         }
 
-        private void Start()
+        private void OnIntroFinished()
         {
             EnemyData enemyData = DataManager.GetData<EnemyData>(tiersInLevel[0].enemies[0].ToString());
-            GameManager.instance.fightManager.SetEnemy(enemyData);
-            
-            StartNextTurn();
-        }
-
-        private void StartNextTurn()
-        {
-            m_turnNumber++;
-            m_tickNumber++;
-            
-            TurnPass.Invoke(m_turnNumber);
-            
-            if (m_tickNumber == 4)
-            {
-                TickExectue.Invoke();
-                m_tickNumber = 0;
-            }
+            GameManager.instance.fightManager.StartFirstFight(enemyData);
         }
     }
 

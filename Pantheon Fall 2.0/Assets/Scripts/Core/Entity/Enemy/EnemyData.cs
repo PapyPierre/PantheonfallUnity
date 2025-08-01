@@ -10,7 +10,7 @@ namespace Core.Entity
         [field: SerializeField] public string fullName;
         [field: SerializeField] public Sprite sprite;
         
-        [field: SerializeField, TextArea] public string AppearingText {get; private set;}
+        [field: SerializeField] public TextToDisplay AppearingText {get; private set;}
         
         [field: SerializeField] public EntityStats BaseStats { get; private set; }
 

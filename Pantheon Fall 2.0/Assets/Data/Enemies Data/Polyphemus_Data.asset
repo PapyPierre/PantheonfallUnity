@@ -15,14 +15,18 @@ MonoBehaviour:
   enemy: 0
   fullName: Polyphemus, The Cyclop
   sprite: {fileID: 21300000, guid: 8f33699c1ce94b14b949f07f55df55b4, type: 3}
+  <AppearingText>k__BackingField:
+    text: Behold! Here's come Polyphemus!
+    isFinalIntroText: 0
   <BaseStats>k__BackingField:
-    maxHp: 6
+    maxHp: 5
     currentHp: 0
     hpRegen: 0
     maxMana: 0
     currentMana: 0
     manaRegen: 0
     armor: 0
+    accuracy: 50
     agility: 0
     intelligence: 1
-  <KnownAbilities>k__BackingField: 00000000
+  <KnownAbilities>k__BackingField: 0200000001000000
