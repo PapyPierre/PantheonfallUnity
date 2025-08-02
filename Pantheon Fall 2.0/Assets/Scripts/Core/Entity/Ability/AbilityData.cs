@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Core.Entity
+namespace Core.Entity.Ability
 {
     [CreateAssetMenu(fileName = "Ability Data", menuName = "ScriptableObjects/Ability Data", order = 1)] 
     public class AbilityData : ScriptableObject

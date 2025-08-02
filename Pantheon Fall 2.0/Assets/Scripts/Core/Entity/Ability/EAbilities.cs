@@ -1,14 +1,17 @@
 ﻿using System;
 using NaughtyAttributes;
 
-namespace Core.Entity
+namespace Core.Entity.Ability
 {
     [Serializable]
     public enum EAbilities
     {
         None,
-        StandBy,
         Strike,
+        Fireball,
+        LightingStrike,
+        WiseFist,
+        Whirlwind,
     }
     
     [Serializable]

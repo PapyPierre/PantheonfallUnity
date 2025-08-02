@@ -8,13 +8,16 @@ namespace Core.UI
         public EnemyInfoUI EnemyInfo { get; private set; }
         public TurnInfoUI TurnInfo { get; private set; }
         public TextAreaUI TextArea{ get; private set; }
+        
+        public LootScreenUI LootScreen { get; private set; }
 
         private void Awake()
         {
             PlayerStats = GetComponent<PlayerStatsUI>();
             EnemyInfo = GetComponent<EnemyInfoUI>();
             TurnInfo = GetComponent<TurnInfoUI>();
-            TextArea = GetComponentInChildren<TextAreaUI>();
+            TextArea = GetComponent<TextAreaUI>();
+            LootScreen = GetComponent<LootScreenUI>();
             
             GameManager.instance.uiManager = this;
         }

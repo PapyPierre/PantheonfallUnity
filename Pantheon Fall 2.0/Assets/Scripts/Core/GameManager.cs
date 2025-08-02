@@ -12,6 +12,7 @@ namespace Core
         [HideInInspector] public FightManager fightManager;
         [HideInInspector] public UIManager uiManager;
         [HideInInspector] public Director director;
+        [HideInInspector] public InputHandler inputHandler;
 
         private readonly List<GameObject> m_dontDestroyOnLoadObjects = new();
         

@@ -10,29 +10,38 @@ namespace Core.UI
         [SerializeField] private TextMeshProUGUI enemyDisplayedName;
         [SerializeField] private Image enemyLifebar;
 
+        private Enemy GetCurrentEnemy()
+        {
+           return GameManager.instance.fightManager.CurrentEnemy;
+        }
+        
+        public void ShowAllEnemyInfos()
+        {
+            enemyDisplayedName.gameObject.SetActive(true);
+            enemyLifebar.gameObject.SetActive(true);
+        }
+        
         public void HideAllEnemyInfos()
         {
             enemyDisplayedName.gameObject.SetActive(false);
             enemyLifebar.gameObject.SetActive(false);
         }
         
-        public void UpdateEnemyInfo(EnemyData data, EntityStats stats)
+        public void UpdateAllEnemyInfo()
         {
-            UpdateEnemyDisplayedName(data.fullName);
-            UpdateEnemyLifeBar(stats.maxHp);
+            UpdateEnemyDisplayedName(GetCurrentEnemy().Data.fullName);
+            UpdateEnemyLifeBar();
         }
 
         private void UpdateEnemyDisplayedName(string newName)
         {
-            enemyDisplayedName.gameObject.SetActive(true);
             enemyDisplayedName.text = newName;
         }
 
-        private void UpdateEnemyLifeBar(int newValue)
+        public void UpdateEnemyLifeBar()
         {
-            enemyLifebar.gameObject.SetActive(true);
             Vector2 sizeDelta = enemyLifebar.rectTransform.sizeDelta;
-            sizeDelta.x = newValue * 20;
+            sizeDelta.x = GetCurrentEnemy().CurrentStats.currentHp * 20;
             enemyLifebar.rectTransform.sizeDelta = sizeDelta;
         }
     }

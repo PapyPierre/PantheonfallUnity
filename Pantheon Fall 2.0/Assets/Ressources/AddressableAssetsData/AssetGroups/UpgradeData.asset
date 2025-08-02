@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: UpgradeData
+  m_EditorClassIdentifier: 
+  m_GroupName: UpgradeData
+  m_GUID: 4c7179925514acf4a8459d53beb34932
+  m_SerializeEntries:
+  - m_GUID: 09529f3d74499a64ebcb0ff68e76f2ee
+    m_Address: ManaPotion_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0f4ce67a5f1d54b45a55bd7f252ca9d5
+    m_Address: Book_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 197ed0a3050fa584f87d5269e9332ef1
+    m_Address: LightingStrikeParchment_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a88f4acc959dff48a49864742f59aef
+    m_Address: SacredPendant_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 24a194b874451574c81e9e3e712ca4db
+    m_Address: LifeGem_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 254444e77ce988f40924cfc6746498ef
+    m_Address: Glasses_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2b634304e42e39649ab9f3125225aab2
+    m_Address: Gloves_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b50fe30a2ad02f49b81eb436910ce11
+    m_Address: Fountain_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 45c2302d360312248bb07719d5e0c090
+    m_Address: WiseFistParchment_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 605d43e1562225f418012fb253762308
+    m_Address: LifePotion_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6fdc80649d05f0a48a2937a880f585b3
+    m_Address: FireballParchment_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7791499f686b92640902ea77dcc3c323
+    m_Address: ManaGem_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7ea2a565592a00d4e917207b7ee884b8
+    m_Address: Grimoire_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a50a5493a9b9cc4b867d81e95113c71
+    m_Address: Shield_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 90616b42899b7f94ab69eb2aef947128
+    m_Address: Boots_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ad3ace73ddf47774f900e1a77ebe82a2
+    m_Address: MythrilArmor_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bbe5a27537804004ba8214dcace5fb08
+    m_Address: MysthicalLeaf_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: df49b6980d4ff29439fe621f9215079f, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: b1228cf6a03afe84f8775632103227fc, type: 2}
+    - {fileID: 11400000, guid: 27a6120498726504eae0445406b786c9, type: 2}

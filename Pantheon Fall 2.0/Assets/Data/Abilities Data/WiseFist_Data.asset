@@ -10,10 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6dedf1ec3b45402cb54aaabf54e5bf54, type: 3}
-  m_Name: StandBy_Data
+  m_Name: WiseFist_Data
   m_EditorClassIdentifier: 
-  ability: 1
+  ability: 4
   speed: 1
-  targets: 0
-  manaCost: 0
-  effects: []
+  targets: 1
+  manaCost: 3
+  effects:
+  - effect: 1
+    targetedStat: 1
+    value: 0
+    targetedStatus: 0

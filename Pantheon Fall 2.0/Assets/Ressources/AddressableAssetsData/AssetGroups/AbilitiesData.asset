@@ -15,8 +15,23 @@ MonoBehaviour:
   m_GroupName: AbilitiesData
   m_GUID: 2f8ef44a91a66174fa350bfa0c3190d1
   m_SerializeEntries:
-  - m_GUID: 5ba4307e4aa99ed49bd17fb3306c6255
-    m_Address: StandBy_Data
+  - m_GUID: 0c8b4764c8f10d047a6036bbe26e3dd0
+    m_Address: LightingStrike_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 370290c6b5022124e86df8ba237c074d
+    m_Address: Fireball_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 77f622871ca23a94e9150e99f8c1af71
+    m_Address: Whirlwind_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8b5c1231e3b034a4fa1c404325401705
+    m_Address: WiseFist_Data
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

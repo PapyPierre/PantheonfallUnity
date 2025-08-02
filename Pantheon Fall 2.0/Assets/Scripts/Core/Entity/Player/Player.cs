@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using Core.Entity.Ability;
+using Core.UI;
 
 namespace Core.Entity
 {
@@ -18,13 +21,10 @@ namespace Core.Entity
                 case EPlayerState.Idle:
                     break;
                 case EPlayerState.UsingAbility:
-                    GameManager.instance.uiManager.TextArea.DisplayAbilities();
+                    m_gm.uiManager.TextArea.DisplayAbilities();
                     break;
                 case EPlayerState.UsingItem:
-                    GameManager.instance.uiManager.TextArea.DisplayItems();
-                    break;
-                case EPlayerState.StandingBy:
-                    GameManager.instance.fightManager.SetPlayerAbilityOfThisTurn(EAbilities.StandBy);
+                    m_gm.uiManager.TextArea.DisplayItems();
                     break;
             }
         }
@@ -41,29 +41,24 @@ namespace Core.Entity
 
         public void DoAction(int actionIndex)
         {
-            if (m_currentState == EPlayerState.UsingAbility)
+            switch (m_currentState)
             {
-                UseAbility(actionIndex);
-            }
-            else if (m_currentState == EPlayerState.UsingItem)
-            {
-                UseItem(actionIndex);
-            }
-            else
-            {
-                switch (actionIndex)
-                {
-                    case 0:
-                        SetPlayerState(EPlayerState.UsingAbility);
-                        break;
-                    case 1:
-                        //TODO SetPlayerState(EPlayerState.UsingItem);
-                        break;
-                    case 2:
-                    default:
-                        SetPlayerState(EPlayerState.StandingBy);
-                        break;
-                }
+                case EPlayerState.UsingAbility: UseAbility(actionIndex);
+                    break;
+                case EPlayerState.UsingItem: UseItem(actionIndex);
+                    break;
+                default:
+                    switch (actionIndex)
+                    {
+                        case 0:
+                            SetPlayerState(EPlayerState.UsingAbility);
+                            break;
+                        case 1:
+                            SetPlayerState(EPlayerState.UsingItem);
+                            break;
+                    }
+
+                    break;
             }
         }
 
@@ -72,10 +67,12 @@ namespace Core.Entity
             AbilityData abilityData = DataManager.GetData<AbilityData>(AvailableAbilities[abilityIndex].ToString());
             if (abilityData.manaCost > CurrentStats.currentMana)
             {
-                GameManager.instance.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay("Not enough Mana!"));
+                m_gm.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay("Not enough Mana!"));
                 return;
             }
-            GameManager.instance.fightManager.SetPlayerAbilityOfThisTurn(AvailableAbilities[abilityIndex]);
+            m_gm.fightManager.SetPlayerAbilityOfThisTurn(AvailableAbilities[abilityIndex]);
+
+            SetPlayerState(EPlayerState.Idle);
         }
 
         private void UseItem(int itemIndex)
@@ -83,10 +80,10 @@ namespace Core.Entity
             //TODO
         }
         
-        public override void ApplyDamage(int damage)
+        public override void ApplyDamage(int damage, Action feedback)
         {
-            base.ApplyDamage(damage);
-            GameManager.instance.uiManager.PlayerStats.UpdatePlayerHp(CurrentStats);
+            feedback += m_gm.uiManager.PlayerStats.UpdatePlayerHp;
+            base.ApplyDamage(damage, feedback);
         }
     }
 
@@ -95,6 +92,5 @@ namespace Core.Entity
         Idle,
         UsingAbility,
         UsingItem,
-        StandingBy,
     }
 }

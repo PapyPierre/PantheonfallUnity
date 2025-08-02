@@ -13,20 +13,19 @@ MonoBehaviour:
   m_Name: Polyphemus_Data
   m_EditorClassIdentifier: 
   enemy: 0
-  fullName: Polyphemus, The Cyclop
+  fullName: Polyphemus, The Famous Cyclop
   sprite: {fileID: 21300000, guid: 8f33699c1ce94b14b949f07f55df55b4, type: 3}
-  <AppearingText>k__BackingField:
-    text: Behold! Here's come Polyphemus!
-    isFinalIntroText: 0
+  <AppearingText>k__BackingField: '"Me Polyphemus. Big eye. Big smash. You small.
+    You squish easy."'
   <BaseStats>k__BackingField:
-    maxHp: 5
+    maxHp: 3
     currentHp: 0
     hpRegen: 0
     maxMana: 0
     currentMana: 0
     manaRegen: 0
     armor: 0
-    accuracy: 50
+    accuracy: 25
     agility: 0
     intelligence: 1
-  <KnownAbilities>k__BackingField: 0200000001000000
+  <KnownAbilities>k__BackingField: 01000000

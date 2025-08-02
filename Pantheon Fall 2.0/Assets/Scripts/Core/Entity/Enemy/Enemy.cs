@@ -1,4 +1,6 @@
-using UnityEngine;
+using System;
+using Core.Entity.Ability;
+using Random = UnityEngine.Random;
 
 namespace Core.Entity
 {
@@ -17,11 +19,16 @@ namespace Core.Entity
             return Data.KnownAbilities[index];
         }
 
-        public override void ApplyDamage(int damage)
+        public override void ApplyDamage(int damage, Action feedback = null)
         {
-            base.ApplyDamage(damage);
-            GameManager.instance.fightManager.FeedbackDamageOnEnemy();
-            GameManager.instance.uiManager.EnemyInfo.UpdateEnemyInfo(Data, CurrentStats);
+            feedback += m_gm.fightManager.FeedbackDamageOnEnemy;
+            base.ApplyDamage(damage, feedback); 
+        }
+
+        protected override void Kill()
+        {
+            m_gm.fightManager.enemyHasBeenKilled = true;
+            base.Kill();
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Core.Entity.Ability;
+using Core.UI;
 using UnityEngine;
 
 namespace Core.Entity
@@ -10,7 +12,7 @@ namespace Core.Entity
         [field: SerializeField] public string fullName;
         [field: SerializeField] public Sprite sprite;
         
-        [field: SerializeField] public TextToDisplay AppearingText {get; private set;}
+        [field: SerializeField, TextArea] public string AppearingText {get; private set;}
         
         [field: SerializeField] public EntityStats BaseStats { get; private set; }
 

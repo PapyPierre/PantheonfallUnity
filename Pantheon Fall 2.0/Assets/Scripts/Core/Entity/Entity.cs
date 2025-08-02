@@ -1,12 +1,17 @@
 using System;
+using Core.Entity.Ability;
+using Core.UI;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Core.Entity
 {
     public abstract class Entity
     {
+        protected GameManager m_gm;
+
         public string EntityName;
-        
+
         public EntityStats CurrentStats { get; }
         public EEntityStatus CurrentStatus { get; private set; }
 
@@ -27,60 +32,91 @@ namespace Core.Entity
             };
 
             EntityName = entityName;
+
+            m_gm = GameManager.instance;
         }
 
         public void SetMaxHp(int newValue)
         {
+            int oldValue = CurrentStats.maxHp;
             CurrentStats.maxHp = newValue;
 
-            if (CurrentStats.maxHp < CurrentStats.currentHp)
+            if (newValue > CurrentStats.maxHp)
             {
-                ApplyDamage(CurrentStats.currentHp - CurrentStats.maxHp);
+                int dif = newValue - oldValue;
+                Heal(dif);
+            }
+            else if (newValue < oldValue)
+            {
+                if (CurrentStats.maxHp < CurrentStats.currentHp)
+                {
+                    ApplyDamage(CurrentStats.currentHp - CurrentStats.maxHp);
+                }
             }
 
-            GameManager.instance.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName}'s max HP changed to {CurrentStats.maxHp}!"));
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                new TextToDisplay($"{EntityName}'s max HP changed from {oldValue} to {CurrentStats.maxHp}!"));
         }
 
-        public virtual void ApplyDamage(int damage)
+        public virtual void ApplyDamage(int damage, Action feedback = null)
         {
-            CurrentStats.currentHp -= damage;
-            
-            GameManager.instance.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName} has lost {damage} HP!"));
-
-            if (CurrentStats.currentHp <= 0)
+            if (CurrentStats.armor >= damage)
             {
-                Kill();
+                CurrentStats.armor -= damage;
+                m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                    new TextToDisplay($"{EntityName} has lost {damage} armor!", feedback));
+                return;
             }
+            
+            if (CurrentStats.armor > 0)
+            {
+                damage -= CurrentStats.armor;
+                m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                    new TextToDisplay($"{EntityName} has lost {CurrentStats.armor} armor!", feedback));
+                CurrentStats.armor = 0;
+            }
+            
+            CurrentStats.currentHp -= damage;
+
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                new TextToDisplay($"{EntityName} has lost {damage} HP!", feedback));
+
+            if (CurrentStats.currentHp <= 0) Kill();
         }
 
         public void Heal(int value)
         {
             CurrentStats.currentHp += value;
-            
-            GameManager.instance.uiManager.TextArea.AddTextToDisplayQueue(
+
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
                 new TextToDisplay($"{EntityName} heals {value} HP!"));
 
             if (CurrentStats.currentHp > CurrentStats.maxHp) CurrentStats.currentHp = CurrentStats.maxHp;
-            
-            GameManager.instance.uiManager.PlayerStats.UpdatePlayerHp(CurrentStats);
+
+            m_gm.uiManager.PlayerStats.UpdatePlayerHp();
         }
 
         public void SetHpRegen(int newValue)
         {
             CurrentStats.hpRegen = newValue;
-            
-            GameManager.instance.uiManager.TextArea.AddTextToDisplayQueue(
+
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
                 new TextToDisplay($"{EntityName}'s HP regeneration set to {newValue}!"));
         }
 
         public void SetMaxMana(int newValue)
         {
-            CurrentStats.maxMana = newValue;
+            int oldValue = CurrentStats.maxMana;
             
-            GameManager.instance.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName}'s max MP set to {newValue}!"));
+            CurrentStats.maxMana = newValue;
+
+            if (newValue > oldValue)
+            {
+                RecoverMana(newValue - oldValue);
+            }
+
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                new TextToDisplay($"{EntityName}'s max MP changed from {oldValue} to {newValue}!"));
 
             if (CurrentStats.maxMana < CurrentStats.currentMana)
             {
@@ -91,7 +127,7 @@ namespace Core.Entity
         public void UseMana(int value)
         {
             CurrentStats.currentMana -= value;
-            
+
             if (CurrentStats.currentMana < 0)
             {
                 CurrentStats.currentMana = 0;
@@ -102,8 +138,8 @@ namespace Core.Entity
         public void RecoverMana(int value)
         {
             CurrentStats.currentMana += value;
-            
-            GameManager.instance.uiManager.TextArea.AddTextToDisplayQueue(
+
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
                 new TextToDisplay($"{EntityName} recovered {value} MP!"));
 
             if (CurrentStats.currentMana > CurrentStats.maxMana)
@@ -115,39 +151,48 @@ namespace Core.Entity
         public void SetManaRegen(int newValue)
         {
             CurrentStats.manaRegen = newValue;
-            
-            GameManager.instance.uiManager.TextArea.AddTextToDisplayQueue(
+
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
                 new TextToDisplay($"{EntityName}'s MP regeneration set to {newValue}!"));
         }
 
         public void SetArmor(int newValue)
         {
             CurrentStats.armor = newValue;
-            
-            GameManager.instance.uiManager.TextArea.AddTextToDisplayQueue(
+
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
                 new TextToDisplay($"{EntityName}'s armor set to {newValue}!"));
+        }
+
+        public void SetAccuracy(int newValue)
+        {
+            CurrentStats.accuracy = newValue;
+
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                new TextToDisplay($"{EntityName}'s accuracy set to {newValue}!"));
         }
 
         public void SetAgility(int newValue)
         {
             CurrentStats.agility = newValue;
-            
-            GameManager.instance.uiManager.TextArea.AddTextToDisplayQueue(
+
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
                 new TextToDisplay($"{EntityName}'s agility set to {newValue}!"));
         }
 
         public void SetIntelligence(int newValue)
         {
             CurrentStats.intelligence = newValue;
-            
-            GameManager.instance.uiManager.TextArea.AddTextToDisplayQueue(
+
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
                 new TextToDisplay($"{EntityName}'s intelligence set to {newValue}!"));
         }
 
-        public void Kill()
+        protected virtual void Kill()
         {
-            GameManager.instance.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName} has been kill!"));
+            Action feedback = m_gm.fightManager.EnemyDeathFeedback;
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                new TextToDisplay($"{EntityName} has been defeated!", feedback));
         }
 
         public void Regenerate()
@@ -165,6 +210,92 @@ namespace Core.Entity
         {
             CurrentStatus = newStatus;
         }
+
+        public void CastAbility(AbilityData ability, Entity target)
+        {
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                new TextToDisplay($"{EntityName} cast {ability.ability.ToString()} on {target.EntityName}!"));
+
+            // Miss (Accuracy)
+            if (Random.Range(1, 101) > CurrentStats.accuracy)
+            {
+                m_gm.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay($"{EntityName} misses!"));
+                return;
+            }
+
+            // Dodge (Agility)
+            if (Random.Range(1, 101) < target.CurrentStats.agility)
+            {
+                m_gm.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay($"{target.EntityName} dodges!"));
+                return;
+            }
+
+            foreach (AbilityEffect abilityEffect in ability.effects)
+            {
+                if (abilityEffect.ModifyStat())
+                {
+                    target.UpdateStat(abilityEffect.targetedStat, abilityEffect.value);
+                }
+                else
+                    switch (abilityEffect.effect)
+                    {
+                        case EAbilityEffect.AddStatus:
+                            target.SetStatus(target.CurrentStatus | abilityEffect.targetedStatus);
+                            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                                new TextToDisplay(
+                                    $"{EntityName} makes {target.EntityName} {abilityEffect.targetedStatus.ToString()}"));
+                            break;
+                        case EAbilityEffect.RemoveStatus:
+                            target.SetStatus(target.CurrentStatus & ~abilityEffect.targetedStatus);
+                            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                                new TextToDisplay(
+                                    $"{target.EntityName} is no longer {abilityEffect.targetedStatus.ToString()}"));
+                            break;
+                    }
+            }
+        }
+
+        public void UpdateStat(EEntityStats stat, int modifierValue, Action feedbackOnDamageReceive = null)
+        {
+            switch (stat)
+            {
+                case EEntityStats.MaxHealth:
+                    SetMaxHp(CurrentStats.maxHp + modifierValue);
+                    break;
+                case EEntityStats.Health:
+                    if (modifierValue >= 0) Heal(modifierValue);
+                    else ApplyDamage(-modifierValue, 
+                        feedbackOnDamageReceive); // -value cuz ApplyDamage() takes positive inputs
+                    break;
+                case EEntityStats.HealthRegen:
+                    SetHpRegen(CurrentStats.hpRegen + modifierValue);
+                    break;
+                case EEntityStats.MaxMana:
+                    SetMaxMana(CurrentStats.maxMana + modifierValue);
+                    break;
+                case EEntityStats.Mana:
+                    if (modifierValue >= 0) RecoverMana(modifierValue);
+                    else UseMana(-modifierValue); // -value cuz UseMana() takes positive inputs
+                    break;
+                case EEntityStats.ManaRegen:
+                    SetManaRegen(CurrentStats.manaRegen + modifierValue);
+                    break;
+                case EEntityStats.Armor:
+                    SetArmor(CurrentStats.armor + modifierValue);
+                    break;
+                case EEntityStats.Accuracy:
+                    SetAccuracy(CurrentStats.accuracy + modifierValue);
+                    break;
+                case EEntityStats.Agility:
+                    SetAgility(CurrentStats.agility + modifierValue);
+                    break;
+                case EEntityStats.Intelligence:
+                    SetIntelligence(CurrentStats.intelligence + modifierValue);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
     }
 
     [Serializable]
@@ -181,7 +312,7 @@ namespace Core.Entity
         [Header("Other")] public int armor;
 
         [Space] public int accuracy;
-        
+
         [Space] public int agility;
 
         [Space] public int intelligence;

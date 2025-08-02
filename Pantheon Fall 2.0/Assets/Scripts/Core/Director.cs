@@ -21,8 +21,19 @@ namespace Core
 
         private void OnIntroFinished()
         {
-            EnemyData enemyData = DataManager.GetData<EnemyData>(tiersInLevel[0].enemies[0].ToString());
-            GameManager.instance.fightManager.StartFirstFight(enemyData);
+            Debug.Log("Intro Finished");
+            GameManager.instance.fightManager.StartFirstFight(GetNextEnemy());
+        }
+
+        public void GoUp()
+        {
+            m_floorNumber++;
+            //TODO Reset turn and tick number
+        }
+
+        public EnemyData GetNextEnemy()
+        {
+            return DataManager.GetData<EnemyData>(tiersInLevel[0].enemies[m_floorNumber].ToString());
         }
     }
 

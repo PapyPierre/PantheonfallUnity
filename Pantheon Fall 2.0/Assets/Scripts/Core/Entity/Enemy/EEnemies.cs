@@ -6,5 +6,7 @@ namespace Core.Entity
     public enum EEnemies
     {
         Polyphemus,
+        Aello,
+        Triton,
     }
 }

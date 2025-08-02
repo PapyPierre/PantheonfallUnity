@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dedf1ec3b45402cb54aaabf54e5bf54, type: 3}
   m_Name: Strike_Data
   m_EditorClassIdentifier: 
-  ability: 2
+  ability: 1
   speed: 1
   targets: 1
   manaCost: 0

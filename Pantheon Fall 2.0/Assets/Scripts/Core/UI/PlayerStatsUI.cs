@@ -8,11 +8,18 @@ namespace Core.UI
 {
     public class PlayerStatsUI : MonoBehaviour
     {
+        private Player m_player;
+        
         [SerializeField] private Image[] playerHpIndicators;
         [SerializeField] private Image[] playerManaIndicators;
         [SerializeField] private TextMeshProUGUI acrTmp;
         [SerializeField] private TextMeshProUGUI agiTmp;
         [SerializeField] private TextMeshProUGUI intTmp;
+
+        public void SetPlayerRef(Player player)
+        {
+            m_player = player;
+        }
 
         public void HideAllStats()
         {
@@ -32,17 +39,19 @@ namespace Core.UI
         }
             
         
-        public void UpdatePlayerStats(EntityStats playerStats)
+        public void UpdateAllPlayerStats()
         {
-            UpdatePlayerHp(playerStats);
-            UpdatePlayerMana(playerStats);
-            UpdatePlayerAcr(playerStats.accuracy);
-            UpdatePlayerAgi(playerStats.agility);
-            UpdatePlayerInt(playerStats.intelligence);
+            UpdatePlayerHp();
+            UpdatePlayerMana();
+            UpdatePlayerAcr();
+            UpdatePlayerAgi();
+            UpdatePlayerInt();
         }
         
-        public void UpdatePlayerHp(EntityStats playerStats)
+        public void UpdatePlayerHp()
         {
+            EntityStats playerStats = m_player.CurrentStats;
+            
             for (int index = 0; index < playerHpIndicators.Length; index++)
             {
                 Image img = playerHpIndicators[index];
@@ -69,8 +78,10 @@ namespace Core.UI
             }
         }
         
-        public void UpdatePlayerMana(EntityStats playerStats)
+        public void UpdatePlayerMana()
         {
+            EntityStats playerStats = m_player.CurrentStats;
+            
             for (int index = 0; index < playerManaIndicators.Length; index++)
             {
                 Image img = playerManaIndicators[index];
@@ -92,22 +103,22 @@ namespace Core.UI
             }
         }
         
-        public void UpdatePlayerAcr(int value)
+        public void UpdatePlayerAcr()
         {
             acrTmp.gameObject.SetActive(true);
-            acrTmp.text = $"ACR: {value}%";   
+            acrTmp.text = $"ACR: {m_player.CurrentStats.accuracy}%";   
         }
         
-        public void UpdatePlayerAgi(int value)
+        public void UpdatePlayerAgi()
         {
             agiTmp.gameObject.SetActive(true);
-            agiTmp.text = $"AGI: {value}%";   
+            agiTmp.text = $"AGI: {m_player.CurrentStats.agility}%";   
         }
         
-        public void UpdatePlayerInt(int value)
+        public void UpdatePlayerInt()
         {
             intTmp.gameObject.SetActive(true);
-            intTmp.text = $"INT: {value}";   
+            intTmp.text = $"INT: {m_player.CurrentStats.intelligence}";   
         }
     }
 }

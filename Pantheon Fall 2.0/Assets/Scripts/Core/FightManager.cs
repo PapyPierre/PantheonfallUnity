@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Entity;
+using Core.Entity.Ability;
+using Core.UI;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Core
 {
@@ -15,6 +16,7 @@ namespace Core
 
         [Header("Enemy"), SerializeField] private SpriteRenderer enemyRenderer;
         private EAbilities m_enemyAbilityThisTurn;
+        [HideInInspector] public bool enemyHasBeenKilled;
 
         [Header("Player"), SerializeField] private EntityStats playerBaseStats;
         [SerializeField] private List<EAbilities> playerAbilitiesOnStart = new List<EAbilities>();
@@ -25,8 +27,13 @@ namespace Core
 
         public Action<int> TurnPass;
         public Action TickExecute;
-        
-        public const int k_FightTextShowDuration = 2000;
+
+        [HideInInspector] public bool readyForNextTurn;
+
+        public LootHandler LootHandler { get; private set; }
+
+        private Action m_enemyAppears;
+        private Action m_fightStart;
 
         private void Awake()
         {
@@ -34,6 +41,9 @@ namespace Core
             m_gm.fightManager = this;
             TickExecute += OnTickExecute;
             enemyRenderer.sprite = null;
+            LootHandler = GetComponent<LootHandler>();
+            m_enemyAppears += OnEnemyAppears;
+            m_fightStart += StartNextTurn;
         }
 
         public void StartFirstFight(EnemyData firstEnemyData)
@@ -41,13 +51,13 @@ namespace Core
             InitializePlayer();
             SetEnemy(firstEnemyData);
             m_gm.uiManager.TurnInfo.EnableTurnNumberText();
-            StartNextTurn();
         }
 
         private void InitializePlayer()
         {
             Player = new Player(playerBaseStats, "Player");
-            m_gm.uiManager.PlayerStats.UpdatePlayerStats(Player.CurrentStats);
+            m_gm.uiManager.PlayerStats.SetPlayerRef(Player);
+            m_gm.uiManager.PlayerStats.UpdateAllPlayerStats();
 
             foreach (EAbilities ability in playerAbilitiesOnStart)
             {
@@ -57,10 +67,19 @@ namespace Core
 
         public void SetEnemy(EnemyData newEnemyData)
         {
+            enemyHasBeenKilled = false;
             CurrentEnemy = new Enemy(newEnemyData);
             enemyRenderer.sprite = newEnemyData.sprite;
-            m_gm.uiManager.EnemyInfo.UpdateEnemyInfo(newEnemyData, CurrentEnemy.CurrentStats);
-            m_gm.uiManager.TextArea.AddTextToDisplayQueue(newEnemyData.AppearingText);
+            m_gm.uiManager.EnemyInfo.ShowAllEnemyInfos();
+            m_gm.uiManager.EnemyInfo.UpdateAllEnemyInfo();
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay(newEnemyData.AppearingText, m_enemyAppears));
+        }
+        
+        private void OnEnemyAppears()
+        {
+            //TODO Use a better way to do this
+            //this adds an empty text that will automatically calls the action which will then call DisplayActions()
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay(string.Empty, m_fightStart));
         }
 
         private void OnTickExecute()
@@ -71,17 +90,29 @@ namespace Core
 
         private void StartNextTurn()
         {
+            readyForNextTurn = false;
+
             ResetEntitiesAbilitiesThisTurn();
-            
+
             TurnNumber++;
-          
+
             IncrementTick();
-            
+
             TurnPass.Invoke(TurnNumber);
 
             SetEnemyAbilityOfThisTurn(CurrentEnemy.GetAbilityToUse());
-
+            
             m_gm.uiManager.TextArea.DisplayActions();
+        }
+
+        public void TryStartNextTurn()
+        {
+            if (readyForNextTurn)
+            {
+                if (CurrentEnemy == null) SetEnemy(m_gm.director.GetNextEnemy());
+                
+                StartNextTurn();
+            }
         }
 
         private void IncrementTick()
@@ -113,14 +144,16 @@ namespace Core
             m_enemyAbilityThisTurn = EAbilities.None;
         }
 
-        private async void CheckForTurnResolution()
+        private void CheckForTurnResolution()
         {
             if (m_playerAbilityThisTurn == EAbilities.None || m_enemyAbilityThisTurn == EAbilities.None) return;
-            await ResolvesTurn();
+            ResolvesTurn();
         }
 
-        private async Task ResolvesTurn()
+        private void ResolvesTurn()
         {
+            m_gm.uiManager.TextArea.HideActions();
+            
             AbilityData playerAbility = DataManager.GetData<AbilityData>(m_playerAbilityThisTurn.ToString());
             AbilityData enemyAbility = DataManager.GetData<AbilityData>(m_enemyAbilityThisTurn.ToString());
 
@@ -128,135 +161,49 @@ namespace Core
 
             if (enemyPlaysFirst)
             {
-                await ResolvesAbility(enemyAbility, CurrentEnemy);
-                await ResolvesAbility(playerAbility, Player);
+                ResolvesAbility(enemyAbility, CurrentEnemy);
+                ResolvesAbility(playerAbility, Player);
             }
             else
             {
-                await ResolvesAbility(playerAbility, Player);
-                await ResolvesAbility(enemyAbility, CurrentEnemy);
+                ResolvesAbility(playerAbility, Player);
+                if (enemyHasBeenKilled) return;
+                ResolvesAbility(enemyAbility, CurrentEnemy);
             }
 
-            StartNextTurn();
+            readyForNextTurn = true;
         }
 
-        private async Task ResolvesAbility(AbilityData ability, Entity.Entity source)
+        private void ResolvesAbility(AbilityData ability, Entity.Entity caster)
         {
             switch (ability.targets)
             {
                 case EAbilityTarget.Self:
-                    if (source == Player) await CastAbility(ability, source, Player);
-                    else await CastAbility(ability, source, CurrentEnemy);
+                    if (caster == Player) caster.CastAbility(ability, Player);
+                    else caster.CastAbility(ability, CurrentEnemy);
                     break;
                 default:
                 case EAbilityTarget.Opponent:
-                    if (source == Player) await CastAbility(ability, source, CurrentEnemy);
-                    else await CastAbility(ability, source, Player);
+                    if (caster == Player) caster.CastAbility(ability, CurrentEnemy);
+                    else caster.CastAbility(ability, Player);
                     break;
                 case EAbilityTarget.Everyone:
-                    await CastAbility(ability, source, Player);
-                    await CastAbility(ability, source, CurrentEnemy);
+
+                    if (caster == Player)
+                    {
+                        caster.CastAbility(ability, CurrentEnemy);
+                        caster.CastAbility(ability, Player);
+                    }
+                    else
+                    {
+                        caster.CastAbility(ability, Player);
+                        caster.CastAbility(ability, CurrentEnemy);
+                    }
+                   
                     break;
             }
-        }
-
-        private async Task CastAbility(AbilityData ability, Entity.Entity source, Entity.Entity target)
-        {
-            if (ability.ability == EAbilities.StandBy)
-            {
-                m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                    new TextToDisplay($"{source.EntityName} stand by!"));
-                m_gm.uiManager.TextArea.ShowNextTextInQueue();
-                await Task.Delay(k_FightTextShowDuration);
-                return;
-            }
             
-            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{source.EntityName} cast {ability.ability.ToString()} on {target.EntityName}!"));
-
-            await Task.Delay(k_FightTextShowDuration);
-            
-            // Misses (Accuracy)
-            if (Random.Range(1, 101) > source.CurrentStats.accuracy)
-            {
-                m_gm.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay($"{source.EntityName} misses!"));
-                m_gm.uiManager.TextArea.ShowNextTextInQueue();
-                await Task.Delay(k_FightTextShowDuration);
-                return;
-            }
-
-            // Misses (Agility)
-            if (Random.Range(1, 101) < target.CurrentStats.agility)
-            {
-                m_gm.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay($"{source.EntityName} misses!"));
-                m_gm.uiManager.TextArea.ShowNextTextInQueue();
-                await Task.Delay(k_FightTextShowDuration);
-                return;
-            }
-
-            foreach (AbilityEffect abilityEffect in ability.effects)
-            {
-                if (abilityEffect.ModifyStat())
-                {
-                    int value = abilityEffect.value;
-
-                    switch (abilityEffect.targetedStat)
-                    {
-                        case EEntityStats.MaxHealth:
-                            target.SetMaxHp(target.CurrentStats.maxHp += value);
-                            break;
-                        case EEntityStats.Health:
-                            if (value > 0) target.Heal(value);
-                            else target.ApplyDamage(-value); // -value cuz ApplyDamage() takes positive inputs
-                            break;
-                        case EEntityStats.HealthRegen:
-                            target.SetHpRegen(target.CurrentStats.hpRegen += value);
-                            break;
-                        case EEntityStats.MaxMana:
-                            target.SetMaxMana(target.CurrentStats.maxMana += value);
-                            break;
-                        case EEntityStats.Mana:
-                            if (value > 0) target.RecoverMana(value);
-                            else target.UseMana(-value); // -value cuz UseMana() takes positive inputs
-                            break;
-                        case EEntityStats.ManaRegen:
-                            target.SetManaRegen(target.CurrentStats.manaRegen += value);
-                            break;
-                        case EEntityStats.Armor:
-                            target.SetArmor(target.CurrentStats.armor += value);
-                            break;
-                        case EEntityStats.Agility:
-                            target.SetAgility(target.CurrentStats.agility += value);
-                            break;
-                        case EEntityStats.Intelligence:
-                            target.SetIntelligence(target.CurrentStats.intelligence += value);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                    
-                    m_gm.uiManager.TextArea.ShowNextTextInQueue();
-                }
-                else
-                    switch (abilityEffect.effect)
-                    {
-                        case EAbilityEffect.AddStatus:
-                            target.SetStatus(target.CurrentStatus | abilityEffect.targetedStatus);
-                            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                                new TextToDisplay(
-                                    $"{source.EntityName} makes {target.EntityName} {abilityEffect.targetedStatus.ToString()}"));
-                            m_gm.uiManager.TextArea.ShowNextTextInQueue();
-                            break;
-                        case EAbilityEffect.RemoveStatus:
-                            target.SetStatus(target.CurrentStatus & ~abilityEffect.targetedStatus);
-                            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                                new TextToDisplay($"{target.EntityName} is no longer {abilityEffect.targetedStatus.ToString()}"));
-                            m_gm.uiManager.TextArea.ShowNextTextInQueue();
-                            break;
-                    }
-            }
-
-            await Task.Delay(k_FightTextShowDuration);
+            m_gm.uiManager.TextArea.DisplayText(); 
         }
 
         public async void FeedbackDamageOnEnemy()
@@ -268,6 +215,20 @@ namespace Core
                 enemyRenderer.color = Color.white;
                 await Task.Delay(150);
             }
+
+            if (CurrentEnemy != null)
+            {
+                m_gm.uiManager.EnemyInfo.UpdateEnemyLifeBar();
+            }
+        }
+
+        public void EnemyDeathFeedback()
+        {
+            m_gm.uiManager.EnemyInfo.HideAllEnemyInfos();
+            enemyRenderer.sprite = null;
+            m_gm.uiManager.LootScreen.ShowLootScreen(LootHandler.GetRandomLoot());
+            m_gm.director.GoUp();
+            CurrentEnemy = null;
         }
     }
 }
