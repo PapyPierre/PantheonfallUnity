@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 725f2a895b9b406186bc2d7960394b40, type: 3}
   m_Name: MythrilArmor_Data
   m_EditorClassIdentifier: 
-  upgrade: 16
+  upgrade: 13
   upgradeName: Mythril Armor
   sprite: {fileID: 21300000, guid: d8ab2e2049dfbb546976dc8ff851deb7, type: 3}
   rarity: 3

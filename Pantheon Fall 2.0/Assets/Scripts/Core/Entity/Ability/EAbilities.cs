@@ -10,8 +10,11 @@ namespace Core.Entity.Ability
         Strike,
         Fireball,
         LightingStrike,
-        WiseFist,
         Whirlwind,
+        TidalWave,
+        SongOfTheDeep,
+        TideBind,
+        SleepyMelody,
     }
     
     [Serializable]

@@ -19,8 +19,8 @@ namespace Core.UI
 
         private readonly Queue<TextToDisplay> m_textToDisplay = new Queue<TextToDisplay>();
         private TextToDisplay m_textCurrentlyDisplayed;
-        
-        public bool IsShowingActions { get; private set; }
+
+        public bool IsShowingActionsOrLoot { get; set; }
 
         private void Awake()
         {
@@ -29,7 +29,7 @@ namespace Core.UI
         }
 
         private void Start()
-        {           
+        {
             ShowIntroText();
         }
 
@@ -43,6 +43,8 @@ namespace Core.UI
             {
                 AddTextToDisplayQueue(txt);
             }
+            
+            DisplayText();
         }
 
         public void OnActionBtnPressed(int actionIndex)
@@ -53,8 +55,8 @@ namespace Core.UI
 
         public void DisplayActions()
         {
-            IsShowingActions = true;
-            
+            IsShowingActionsOrLoot = true;
+
             HideCurrentlyDisplayedText();
 
             actionsButtons[0].gameObject.SetActive(true);
@@ -69,16 +71,22 @@ namespace Core.UI
         public void DisplayAbilities()
         {
             HideActions();
-            
-            IsShowingActions = true;
-            
+
+            IsShowingActionsOrLoot = true;
+
             for (int i = 0; i < m_gm.fightManager.Player.AvailableAbilities.Count; i++)
             {
                 EAbilities ability = m_gm.fightManager.Player.AvailableAbilities[i];
 
+                AbilityData abilityData = DataManager.GetData<AbilityData>(ability.ToString());
+
                 actionsButtons[i].gameObject.SetActive(true);
-                actionsButtons[i].interactable = true;
-                actionsButtonsTmp[i].text = ability.ToString();
+                actionsButtons[i].interactable =
+                    abilityData.manaCost <= m_gm.fightManager.Player.CurrentStats.currentMana;
+                
+                actionsButtonsTmp[i].text = abilityData.manaCost == 0 ?
+                    $"{abilityData.abilityName}" : 
+                    $"{abilityData.abilityName} ({abilityData.manaCost} MP)";
             }
         }
 
@@ -91,12 +99,13 @@ namespace Core.UI
                 btn.gameObject.SetActive(false);
             }
 
-            IsShowingActions = false;
+            IsShowingActionsOrLoot = false;
         }
 
         public void AddTextToDisplayQueue(TextToDisplay text)
         {
             m_textToDisplay.Enqueue(text);
+            Debug.Log($"Enqueue: {text.text}");
         }
 
         public void DisplayText()
@@ -110,7 +119,7 @@ namespace Core.UI
         public void HideCurrentlyDisplayedText()
         {
             if (m_textCurrentlyDisplayed == null) return;
-            
+
             textTMP.text = string.Empty;
 
             if (m_textCurrentlyDisplayed.isFinalIntroText)
@@ -119,7 +128,7 @@ namespace Core.UI
                 m_gm.director.IntroTextFinished.Invoke();
                 return;
             }
-            
+
             m_textCurrentlyDisplayed = null;
         }
     }

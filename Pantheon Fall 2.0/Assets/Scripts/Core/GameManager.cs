@@ -16,7 +16,7 @@ namespace Core
 
         private readonly List<GameObject> m_dontDestroyOnLoadObjects = new();
         
-        [HideInInspector] public bool gameIsStarted;
+        [HideInInspector] public bool gameIsOn;
         
         #region Initialization
         

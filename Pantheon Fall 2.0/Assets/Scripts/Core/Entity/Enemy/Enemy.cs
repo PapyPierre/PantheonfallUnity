@@ -1,5 +1,6 @@
 using System;
 using Core.Entity.Ability;
+using Core.UI;
 using Random = UnityEngine.Random;
 
 namespace Core.Entity
@@ -16,6 +17,13 @@ namespace Core.Entity
         public EAbilities GetAbilityToUse() //TODO Improve AI
         {
             int index = Random.Range(0, Data.KnownAbilities.Count);
+
+            // /!\ infinite loop possible if all abilities use mana /!\
+            if (DataManager.GetData<AbilityData>(Data.KnownAbilities[index].ToString()).manaCost > CurrentStats.currentMana)
+            {
+                return GetAbilityToUse();
+            }
+            
             return Data.KnownAbilities[index];
         }
 
@@ -28,7 +36,9 @@ namespace Core.Entity
         protected override void Kill()
         {
             m_gm.fightManager.enemyHasBeenKilled = true;
-            base.Kill();
+            Action feedback = m_gm.fightManager.EnemyDeathFeedback;
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                new TextToDisplay($"{EntityName} has been defeated!", feedback));
         }
     }
 }

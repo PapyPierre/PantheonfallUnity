@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 725f2a895b9b406186bc2d7960394b40, type: 3}
   m_Name: SacredPendant_Data
   m_EditorClassIdentifier: 
-  upgrade: 13
+  upgrade: 11
   upgradeName: Sacred pendant
   sprite: {fileID: 21300000, guid: 041a7d56586036844a9db1efe72b3a7d, type: 3}
-  rarity: 3
+  rarity: 2
   bonusList:
   - bonus: 1
     targetedStat: 5

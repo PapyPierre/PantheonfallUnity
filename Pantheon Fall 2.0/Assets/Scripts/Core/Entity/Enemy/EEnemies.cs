@@ -8,5 +8,6 @@ namespace Core.Entity
         Polyphemus,
         Aello,
         Triton,
+        Marsyas,
     }
 }

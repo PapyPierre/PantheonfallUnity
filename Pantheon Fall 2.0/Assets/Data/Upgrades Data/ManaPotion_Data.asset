@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 725f2a895b9b406186bc2d7960394b40, type: 3}
   m_Name: ManaPotion_Data
   m_EditorClassIdentifier: 
-  upgrade: 11
+  upgrade: 9
   upgradeName: Mana potion
   sprite: {fileID: 21300000, guid: 3d7f653cd31300d4b9fe83a0556115b0, type: 3}
   rarity: 0

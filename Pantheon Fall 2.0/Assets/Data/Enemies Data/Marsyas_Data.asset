@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16b0324825d348a4b657d4e27378f380, type: 3}
+  m_Name: Marsyas_Data
+  m_EditorClassIdentifier: 
+  enemy: 3
+  fullName: Marsyas, The Pride Satyr
+  sprite: {fileID: 21300000, guid: 0d951ccb2de204e47ad11dcb46d3472e, type: 3}
+  <AppearingText>k__BackingField: "\"I am Marsyas\u2026 the one who dared to play
+    against a god. They say I lost \u2014 but the song never ended. It echoes still\u2026
+    in every crack, every shadow. Want to hear it?\""
+  <BaseStats>k__BackingField:
+    maxHp: 2
+    currentHp: 0
+    hpRegen: 0
+    maxMana: 2
+    currentMana: 0
+    manaRegen: 0
+    armor: 0
+    accuracy: 80
+    agility: 20
+  <KnownAbilities>k__BackingField: 010000000600000008000000

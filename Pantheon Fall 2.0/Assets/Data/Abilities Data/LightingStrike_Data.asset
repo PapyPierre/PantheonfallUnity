@@ -13,11 +13,16 @@ MonoBehaviour:
   m_Name: LightingStrike_Data
   m_EditorClassIdentifier: 
   ability: 3
-  speed: 1
+  abilityName: Lighting Strike
+  speed: 3
   targets: 1
-  manaCost: 2
+  manaCost: 1
   effects:
   - effect: 1
     targetedStat: 1
-    value: -2
+    value: -1
+    targetedStatus: 0
+  - effect: 1
+    targetedStat: 8
+    value: -5
     targetedStatus: 0

@@ -9,11 +9,14 @@ EditorBuildSettings:
     path: Assets/Scenes/InitScene.unity
     guid: 6225d862671267442ac962b4a55fafbb
   - enabled: 1
+    path: Assets/Scenes/MainMenuScene.unity
+    guid: ce2be1256889750409f8d6ebd353b114
+  - enabled: 1
     path: Assets/Scenes/GameScene.unity
     guid: ffe50621cc553754c823c67dd6a611c5
   - enabled: 1
-    path: Assets/Scenes/MainMenuScene.unity
-    guid: ce2be1256889750409f8d6ebd353b114
+    path: Assets/Scenes/VictoryScene.unity
+    guid: e321628199a786e4ba6e14d7705aae31
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 6d8ab7a46a858204a957e547235b0d0c, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

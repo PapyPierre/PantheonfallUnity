@@ -7,6 +7,7 @@ namespace Core.Entity.Ability
     public class AbilityData : ScriptableObject
     {
         public EAbilities ability;
+        public string abilityName;
         public int speed;
         public EAbilityTarget targets;
         public int manaCost;

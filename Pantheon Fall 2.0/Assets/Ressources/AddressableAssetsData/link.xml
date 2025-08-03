@@ -1,0 +1,33 @@
+<linker>
+  <assembly fullname="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Core.Entity.Ability.AbilityData" preserve="all" />
+    <type fullname="Core.Entity.EnemyData" preserve="all" />
+    <type fullname="Core.UI.TextData" preserve="all" />
+    <type fullname="Core.Upgrade.UpgradeData" preserve="all" />
+    <type fullname="Core.Entity.Ability.AbilityEffect" preserve="nothing" serialized="true" />
+    <type fullname="Core.Entity.Ability.EAbilities" preserve="nothing" serialized="true" />
+    <type fullname="Core.Entity.Ability.EAbilityEffect" preserve="nothing" serialized="true" />
+    <type fullname="Core.Entity.Ability.EAbilityTarget" preserve="nothing" serialized="true" />
+    <type fullname="Core.Upgrade.EUpgradeRarity" preserve="nothing" serialized="true" />
+    <type fullname="Core.Upgrade.EUpgrades" preserve="nothing" serialized="true" />
+    <type fullname="Core.Upgrade.EUpgradesBonus" preserve="nothing" serialized="true" />
+    <type fullname="Core.Upgrade.UpgradeBonus" preserve="nothing" serialized="true" />
+    <type fullname="Core.Entity.EEnemies" preserve="nothing" serialized="true" />
+    <type fullname="Core.Entity.EntityStats" preserve="nothing" serialized="true" />
+    <type fullname="Core.UI.TextToDisplay" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />
+  </assembly>
+  <assembly fullname="Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AssetBundleProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.BundledAssetProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.InstanceProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.SceneProvider" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.Object" preserve="all" />
+    <type fullname="UnityEngine.Sprite" preserve="all" />
+    <type fullname="UnityEngine.Texture2D" preserve="all" />
+  </assembly>
+</linker>

@@ -20,6 +20,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 26375efed6c6d9247be314312448af95
+    m_Address: SongOfTheDeep_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3562d0fbe8520c445a019629326e1057
+    m_Address: TidalWave_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 370290c6b5022124e86df8ba237c074d
     m_Address: Fireball_Data
     m_ReadOnly: 0
@@ -30,13 +40,18 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8b5c1231e3b034a4fa1c404325401705
-    m_Address: WiseFist_Data
+  - m_GUID: 78a9879850be1c34e9d728a2d1c8819b
+    m_Address: SleepyMelody_Data
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a3215bc83b5677f4a9c6e2fc30426657
     m_Address: Strike_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b9f9c0806928b2a4f8aa8af23785ab52
+    m_Address: TideBind_Data
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

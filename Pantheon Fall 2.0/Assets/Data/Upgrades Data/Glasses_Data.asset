@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 725f2a895b9b406186bc2d7960394b40, type: 3}
   m_Name: Glasses_Data
   m_EditorClassIdentifier: 
-  upgrade: 15
+  upgrade: 12
   upgradeName: Some glasses
   sprite: {fileID: 21300000, guid: cd40e101411bd49498ed74237d21b5c3, type: 3}
-  rarity: 1
+  rarity: 0
   bonusList:
   - bonus: 1
     targetedStat: 7
-    value: 5
+    value: 6
     ability: 0

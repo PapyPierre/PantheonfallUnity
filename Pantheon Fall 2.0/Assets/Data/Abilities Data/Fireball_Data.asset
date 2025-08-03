@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Fireball_Data
   m_EditorClassIdentifier: 
   ability: 2
-  speed: 1
+  abilityName: Fireball
+  speed: 0
   targets: 1
-  manaCost: 3
+  manaCost: 2
   effects:
   - effect: 1
     targetedStat: 1
-    value: -3
+    value: -2
     targetedStatus: 0

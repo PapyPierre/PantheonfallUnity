@@ -20,14 +20,13 @@ MonoBehaviour:
 
 '
   <BaseStats>k__BackingField:
-    maxHp: 2
+    maxHp: 1
     currentHp: 0
     hpRegen: 0
     maxMana: 0
     currentMana: 0
     manaRegen: 0
     armor: 0
-    accuracy: 60
-    agility: 10
-    intelligence: 1
-  <KnownAbilities>k__BackingField: 05000000
+    accuracy: 80
+    agility: 40
+  <KnownAbilities>k__BackingField: 04000000

@@ -18,7 +18,7 @@ MonoBehaviour:
   <AppearingText>k__BackingField: '"Me Polyphemus. Big eye. Big smash. You small.
     You squish easy."'
   <BaseStats>k__BackingField:
-    maxHp: 3
+    maxHp: 4
     currentHp: 0
     hpRegen: 0
     maxMana: 0
@@ -27,5 +27,4 @@ MonoBehaviour:
     armor: 0
     accuracy: 25
     agility: 0
-    intelligence: 1
   <KnownAbilities>k__BackingField: 01000000

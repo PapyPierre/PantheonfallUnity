@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Strike_Data
   m_EditorClassIdentifier: 
   ability: 1
+  abilityName: Strike
   speed: 1
   targets: 1
   manaCost: 0

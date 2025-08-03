@@ -168,6 +168,7 @@ MonoBehaviour:
   uiManager: {fileID: 0}
   director: {fileID: 0}
   inputHandler: {fileID: 0}
+  gameIsStarted: 0
 --- !u!114 &1936386057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,7 +181,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0ff84fef3764c3d92f2983bf2fdab46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  awaitingActions: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

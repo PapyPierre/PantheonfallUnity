@@ -13,7 +13,10 @@ MonoBehaviour:
   m_Name: IntroText_Data
   m_EditorClassIdentifier: 
   textsToDisplays:
-  - text: Intro blabla
+  - text: Welcome, challenger. The time has come to end the gods' supremacy.
     isFinalIntroText: 0
-  - text: Intro blabla 2
+  - text: "Here, you will face all manner of enemies \u2014 from the dullest cyclops
+      to the most powerful of deities."
+    isFinalIntroText: 0
+  - text: I hope you came prepared... Now show me what you're made of!
     isFinalIntroText: 1

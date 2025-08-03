@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 725f2a895b9b406186bc2d7960394b40, type: 3}
   m_Name: MysthicalLeaf_Data
   m_EditorClassIdentifier: 
-  upgrade: 12
+  upgrade: 10
   upgradeName: Mysthical leaf
   sprite: {fileID: 21300000, guid: b44c1176deae3e147a6b7df6b6b177a9, type: 3}
-  rarity: 3
+  rarity: 2
   bonusList:
   - bonus: 1
     targetedStat: 2

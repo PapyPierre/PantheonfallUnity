@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Core.Entity;
 using Core.Upgrade;
@@ -9,8 +8,10 @@ namespace Core.UI
     public class LootScreenUI : MonoBehaviour
     {
         [SerializeField] private GameObject lootScreenGo;
-        
+
         [SerializeField] private LootElementUI[] lootElements;
+
+        private bool m_startUpgrade = true;
 
         private void Start()
         {
@@ -19,6 +20,8 @@ namespace Core.UI
 
         public void ShowLootScreen(List<EUpgrades> upgrades)
         {
+            GameManager.instance.uiManager.TextArea.IsShowingActionsOrLoot = true;
+
             lootScreenGo.SetActive(true);
 
             for (int i = 0; i < lootElements.Length; i++)
@@ -40,18 +43,22 @@ namespace Core.UI
                 if (bonus.ModifyStat())
                 {
                     player.UpdateStat(bonus.targetedStat, bonus.value);
-                    GameManager.instance.uiManager.PlayerStats.UpdateAllPlayerStats();
                 }
-                
+
                 if (bonus.UnlockAbility()) player.UnlockAbility(bonus.ability);
             }
 
-            GameManager.instance.fightManager.readyForNextTurn = true;
+            if (m_startUpgrade)
+            {
+                GameManager.instance.fightManager.StartFirstFight(GameManager.instance.director.GetNextEnemy());
+                m_startUpgrade = false;
+            }
         }
-        
+
         public void HideLootScreen()
         {
             lootScreenGo.SetActive(false);
+            GameManager.instance.uiManager.TextArea.IsShowingActionsOrLoot = false;
         }
     }
 }

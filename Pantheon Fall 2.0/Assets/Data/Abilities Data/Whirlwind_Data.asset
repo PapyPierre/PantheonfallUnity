@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dedf1ec3b45402cb54aaabf54e5bf54, type: 3}
   m_Name: Whirlwind_Data
   m_EditorClassIdentifier: 
-  ability: 5
-  speed: 3
+  ability: 4
+  abilityName: Whirlwind
+  speed: 2
   targets: 1
   manaCost: 0
   effects:

@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: EntityData
   m_GUID: 76ccb9bca37374443ad45f831627829e
   m_SerializeEntries:
+  - m_GUID: 4f524681c69a868429022368ad9427e3
+    m_Address: Marsyas_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 75dff6625e150fb48b5ce7d42e1d6c89
     m_Address: Polyphemus_Data
     m_ReadOnly: 0
@@ -22,6 +27,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8c81f6fdbba5cfc478c71bc754a96d0d
     m_Address: Aello_Data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e0672fe27fe7cd140a1e9743ffa19989
+    m_Address: Triton_Data
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

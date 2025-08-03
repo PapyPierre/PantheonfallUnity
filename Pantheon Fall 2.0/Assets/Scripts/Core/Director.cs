@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Core.Entity;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Core
 {
@@ -21,13 +22,14 @@ namespace Core
 
         private void Start()
         {
-            GameManager.instance.gameIsStarted = true;
+            GameManager.instance.gameIsOn = true;
         }
 
         private void OnIntroFinished()
         {
             Debug.Log("Intro Finished");
-            GameManager.instance.fightManager.StartFirstFight(GetNextEnemy());
+            GameManager.instance.uiManager.LootScreen.ShowLootScreen(
+                GameManager.instance.fightManager.LootHandler.GetRandomLoot());
         }
 
         public void GoUp()
@@ -38,6 +40,12 @@ namespace Core
 
         public EnemyData GetNextEnemy()
         {
+            if (m_floorNumber >= tiersInLevel[0].enemies.Count)
+            {
+                SceneManager.LoadScene("VictoryScene");
+                return null;
+            }
+            
             return DataManager.GetData<EnemyData>(tiersInLevel[0].enemies[m_floorNumber].ToString());
         }
     }

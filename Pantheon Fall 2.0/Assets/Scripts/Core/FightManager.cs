@@ -23,36 +23,35 @@ namespace Core
         private EAbilities m_playerAbilityThisTurn;
 
         public int TurnNumber { get; private set; }
-        public int TickNumber { get; private set; }
 
         public Action<int> TurnPass;
-        public Action TickExecute;
-
-        [HideInInspector] public bool readyForNextTurn;
 
         public LootHandler LootHandler { get; private set; }
 
         private Action m_enemyAppears;
-        private Action m_fightStart;
+        private Action m_startNextTurn;
 
         private void Awake()
         {
             m_gm = GameManager.instance;
             m_gm.fightManager = this;
-            TickExecute += OnTickExecute;
-            enemyRenderer.sprite = null;
             LootHandler = GetComponent<LootHandler>();
             m_enemyAppears += OnEnemyAppears;
-            m_fightStart += StartNextTurn;
+            m_startNextTurn += StartNextTurn;
+        }
+
+        private void Start()
+        {
+            InitializePlayer();
+            HideEnemy();
         }
 
         public void StartFirstFight(EnemyData firstEnemyData)
         {
-            InitializePlayer();
             SetEnemy(firstEnemyData);
             m_gm.uiManager.TurnInfo.EnableTurnNumberText();
         }
-
+        
         private void InitializePlayer()
         {
             Player = new Player(playerBaseStats, "Player");
@@ -67,63 +66,54 @@ namespace Core
 
         public void SetEnemy(EnemyData newEnemyData)
         {
+            if (newEnemyData == null)
+            {
+                Debug.LogWarning($"newEnemyData is null");
+                return;
+            }
+            
             enemyHasBeenKilled = false;
             CurrentEnemy = new Enemy(newEnemyData);
             enemyRenderer.sprite = newEnemyData.sprite;
             m_gm.uiManager.EnemyInfo.ShowAllEnemyInfos();
             m_gm.uiManager.EnemyInfo.UpdateAllEnemyInfo();
-            m_gm.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay(newEnemyData.AppearingText, m_enemyAppears));
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay(newEnemyData.AppearingText,
+                m_enemyAppears));
         }
-        
+
         private void OnEnemyAppears()
+        {
+            DelayStartNextTurn();
+        }
+
+        private void DelayStartNextTurn()
         {
             //TODO Use a better way to do this
             //this adds an empty text that will automatically calls the action which will then call DisplayActions()
-            m_gm.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay(string.Empty, m_fightStart));
-        }
-
-        private void OnTickExecute()
-        {
-            Player.Regenerate();
-            CurrentEnemy.Regenerate();
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay(string.Empty, m_startNextTurn));
         }
 
         private void StartNextTurn()
         {
-            readyForNextTurn = false;
-
             ResetEntitiesAbilitiesThisTurn();
+
+            if (CurrentEnemy == null) return;
 
             TurnNumber++;
 
-            IncrementTick();
+            Player.Regenerate();
+            CurrentEnemy.Regenerate();
 
             TurnPass.Invoke(TurnNumber);
 
             SetEnemyAbilityOfThisTurn(CurrentEnemy.GetAbilityToUse());
-            
+
             m_gm.uiManager.TextArea.DisplayActions();
         }
 
-        public void TryStartNextTurn()
+        public void TrySetNextEnemy()
         {
-            if (readyForNextTurn)
-            {
-                if (CurrentEnemy == null) SetEnemy(m_gm.director.GetNextEnemy());
-                
-                StartNextTurn();
-            }
-        }
-
-        private void IncrementTick()
-        {
-            TickNumber++;
-
-            if (TickNumber == 4)
-            {
-                TickExecute.Invoke();
-                TickNumber = 0;
-            }
+            if (CurrentEnemy == null && TurnNumber > 1) SetEnemy(m_gm.director.GetNextEnemy());
         }
 
         public void SetPlayerAbilityOfThisTurn(EAbilities ability)
@@ -153,7 +143,7 @@ namespace Core
         private void ResolvesTurn()
         {
             m_gm.uiManager.TextArea.HideActions();
-            
+
             AbilityData playerAbility = DataManager.GetData<AbilityData>(m_playerAbilityThisTurn.ToString());
             AbilityData enemyAbility = DataManager.GetData<AbilityData>(m_enemyAbilityThisTurn.ToString());
 
@@ -170,8 +160,10 @@ namespace Core
                 if (enemyHasBeenKilled) return;
                 ResolvesAbility(enemyAbility, CurrentEnemy);
             }
+            
+            m_gm.uiManager.TextArea.DisplayText();
 
-            readyForNextTurn = true;
+            DelayStartNextTurn();
         }
 
         private void ResolvesAbility(AbilityData ability, Entity.Entity caster)
@@ -199,11 +191,8 @@ namespace Core
                         caster.CastAbility(ability, Player);
                         caster.CastAbility(ability, CurrentEnemy);
                     }
-                   
                     break;
             }
-            
-            m_gm.uiManager.TextArea.DisplayText(); 
         }
 
         public async void FeedbackDamageOnEnemy()
@@ -224,11 +213,16 @@ namespace Core
 
         public void EnemyDeathFeedback()
         {
-            m_gm.uiManager.EnemyInfo.HideAllEnemyInfos();
-            enemyRenderer.sprite = null;
+            HideEnemy();
             m_gm.uiManager.LootScreen.ShowLootScreen(LootHandler.GetRandomLoot());
             m_gm.director.GoUp();
             CurrentEnemy = null;
+        }
+
+        public void HideEnemy()
+        {
+            m_gm.uiManager.EnemyInfo.HideAllEnemyInfos();
+            enemyRenderer.sprite = null;
         }
     }
 }

@@ -14,9 +14,9 @@ namespace Core
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0) && m_gm.gameIsStarted)
+            if (Input.GetMouseButtonDown(0) && m_gm.gameIsOn)
             {
-                if (!GameManager.instance.uiManager.TextArea.IsShowingActions)
+                if (!GameManager.instance.uiManager.TextArea.IsShowingActionsOrLoot)
                 {
                     Interact();
                 }
@@ -29,7 +29,7 @@ namespace Core
 
             if (m_gm.uiManager.TextArea.QueueIsEmpty())
             {
-                m_gm.fightManager.TryStartNextTurn();
+                m_gm.fightManager.TrySetNextEnemy();
             }
             else
             {

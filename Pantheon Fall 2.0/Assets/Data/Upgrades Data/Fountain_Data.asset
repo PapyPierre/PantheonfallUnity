@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 725f2a895b9b406186bc2d7960394b40, type: 3}
   m_Name: Fountain_Data
   m_EditorClassIdentifier: 
-  upgrade: 9
+  upgrade: 7
   upgradeName: 'Nymphs'' fountain '
   sprite: {fileID: 21300000, guid: e894497a5251a7041abf4e8553ae8a2c, type: 3}
   rarity: 2

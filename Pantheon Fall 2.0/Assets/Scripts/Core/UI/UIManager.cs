@@ -25,7 +25,6 @@ namespace Core.UI
         private void Start()
         {
             PlayerStats.HideAllStats();
-            EnemyInfo.HideAllEnemyInfos();
             TurnInfo.HideAllTurnInfos();
         }
     }

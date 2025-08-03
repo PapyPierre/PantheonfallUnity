@@ -9,15 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 725f2a895b9b406186bc2d7960394b40, type: 3}
-  m_Name: Book_Data
+  m_Script: {fileID: 11500000, guid: 6dedf1ec3b45402cb54aaabf54e5bf54, type: 3}
+  m_Name: SleepyMelody_Data
   m_EditorClassIdentifier: 
-  upgrade: 7
-  upgradeName: Book of wisdom
-  sprite: {fileID: 21300000, guid: 6a198e7e0e08cbc4db7b8104313e0b0f, type: 3}
-  rarity: 0
-  bonusList:
-  - bonus: 1
-    targetedStat: 9
+  ability: 8
+  abilityName: Sleepy Melody
+  speed: 1
+  targets: 1
+  manaCost: 1
+  effects:
+  - effect: 2
+    targetedStat: 4
     value: 1
-    ability: 0
+    targetedStatus: 2

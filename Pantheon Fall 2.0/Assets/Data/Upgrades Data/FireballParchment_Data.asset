@@ -14,10 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgrade: 0
   upgradeName: Fireball parchment
-  sprite: {fileID: 21300000, guid: 3e9802f1a9c3c2d4bb478da202944256, type: 3}
+  sprite: {fileID: 21300000, guid: 6a198e7e0e08cbc4db7b8104313e0b0f, type: 3}
   rarity: 2
   bonusList:
   - bonus: 2
     targetedStat: 0
     value: 0
+    ability: 2
+  - bonus: 1
+    targetedStat: 3
+    value: 1
     ability: 2

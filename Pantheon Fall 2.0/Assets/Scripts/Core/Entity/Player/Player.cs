@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Core.Entity.Ability;
 using Core.UI;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Core.Entity
 {
@@ -84,6 +87,34 @@ namespace Core.Entity
         {
             feedback += m_gm.uiManager.PlayerStats.UpdatePlayerHp;
             base.ApplyDamage(damage, feedback);
+        }
+        
+        protected override void Kill()
+        {
+            Action feedback = OnPlayerDeath;
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                new TextToDisplay($"{EntityName} has been defeated!", feedback));
+        }
+
+        private async void OnPlayerDeath()
+        {
+            GameManager.instance.gameIsOn = false;
+            GameManager.instance.uiManager.PlayerStats.HideAllStats();
+            GameManager.instance.uiManager.TurnInfo.HideAllTurnInfos();
+            await Task.Delay(1000);
+            GameManager.instance.fightManager.HideEnemy();
+            await Task.Delay(1000);
+            SceneManager.LoadScene("MainMenuScene");
+        }
+
+        public void UpdateUIStats()
+        {
+            GameManager.instance.uiManager.PlayerStats.UpdateAllPlayerStats();
+        }
+
+        public override void UpdateStat(EEntityStats stat, int modifierValue, Action feedback = null)
+        {
+            base.UpdateStat(stat, modifierValue,UpdateUIStats);
         }
     }
 

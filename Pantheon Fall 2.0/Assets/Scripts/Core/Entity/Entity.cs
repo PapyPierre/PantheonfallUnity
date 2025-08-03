@@ -12,6 +12,8 @@ namespace Core.Entity
 
         public string EntityName;
 
+        public int turnBeingAsleep;
+
         public EntityStats CurrentStats { get; }
         public EEntityStatus CurrentStatus { get; private set; }
 
@@ -28,7 +30,6 @@ namespace Core.Entity
                 armor = stats.armor,
                 accuracy = stats.accuracy,
                 agility = stats.agility,
-                intelligence = stats.intelligence,
             };
 
             EntityName = entityName;
@@ -36,29 +37,34 @@ namespace Core.Entity
             m_gm = GameManager.instance;
         }
 
-        public void SetMaxHp(int newValue)
+        public bool HasStatus(EEntityStatus status)
+        {
+            return (CurrentStatus & status) > 0;
+        }
+
+        public void SetMaxHp(int newValue, Action feedback)
         {
             int oldValue = CurrentStats.maxHp;
             CurrentStats.maxHp = newValue;
 
-            if (newValue > CurrentStats.maxHp)
+            if (newValue > oldValue)
             {
                 int dif = newValue - oldValue;
-                Heal(dif);
+                Heal(dif, feedback);
             }
             else if (newValue < oldValue)
             {
                 if (CurrentStats.maxHp < CurrentStats.currentHp)
                 {
-                    ApplyDamage(CurrentStats.currentHp - CurrentStats.maxHp);
+                    ApplyDamage(CurrentStats.currentHp - CurrentStats.maxHp, feedback);
                 }
             }
 
             m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName}'s max HP changed from {oldValue} to {CurrentStats.maxHp}!"));
+                new TextToDisplay($"{EntityName}'s max HP changed from {oldValue} to {CurrentStats.maxHp}!", feedback));
         }
 
-        public virtual void ApplyDamage(int damage, Action feedback = null)
+        public virtual void ApplyDamage(int damage, Action feedback)
         {
             if (CurrentStats.armor >= damage)
             {
@@ -67,7 +73,7 @@ namespace Core.Entity
                     new TextToDisplay($"{EntityName} has lost {damage} armor!", feedback));
                 return;
             }
-            
+
             if (CurrentStats.armor > 0)
             {
                 damage -= CurrentStats.armor;
@@ -75,7 +81,7 @@ namespace Core.Entity
                     new TextToDisplay($"{EntityName} has lost {CurrentStats.armor} armor!", feedback));
                 CurrentStats.armor = 0;
             }
-            
+
             CurrentStats.currentHp -= damage;
 
             m_gm.uiManager.TextArea.AddTextToDisplayQueue(
@@ -84,39 +90,39 @@ namespace Core.Entity
             if (CurrentStats.currentHp <= 0) Kill();
         }
 
-        public void Heal(int value)
+        public void Heal(int value, Action feedback)
         {
             CurrentStats.currentHp += value;
 
             m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName} heals {value} HP!"));
+                new TextToDisplay($"{EntityName} heals {value} HP!", feedback));
 
             if (CurrentStats.currentHp > CurrentStats.maxHp) CurrentStats.currentHp = CurrentStats.maxHp;
 
             m_gm.uiManager.PlayerStats.UpdatePlayerHp();
         }
 
-        public void SetHpRegen(int newValue)
+        public void SetHpRegen(int newValue, Action feedback)
         {
             CurrentStats.hpRegen = newValue;
 
             m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName}'s HP regeneration set to {newValue}!"));
+                new TextToDisplay($"{EntityName}'s HP regeneration set to {newValue}!", feedback));
         }
 
-        public void SetMaxMana(int newValue)
+        public void SetMaxMana(int newValue, Action feedback)
         {
             int oldValue = CurrentStats.maxMana;
-            
+
             CurrentStats.maxMana = newValue;
 
             if (newValue > oldValue)
             {
-                RecoverMana(newValue - oldValue);
+                RecoverMana(newValue - oldValue, feedback);
             }
 
             m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName}'s max MP changed from {oldValue} to {newValue}!"));
+                new TextToDisplay($"{EntityName}'s max MP changed from {oldValue} to {newValue}!", feedback));
 
             if (CurrentStats.maxMana < CurrentStats.currentMana)
             {
@@ -124,7 +130,7 @@ namespace Core.Entity
             }
         }
 
-        public void UseMana(int value)
+        public virtual void UseMana(int value)
         {
             CurrentStats.currentMana -= value;
 
@@ -133,14 +139,16 @@ namespace Core.Entity
                 CurrentStats.currentMana = 0;
                 Debug.LogWarning("Used more mana than entity has");
             }
+            
+            GameManager.instance.fightManager.Player.UpdateUIStats();
         }
 
-        public void RecoverMana(int value)
+        public void RecoverMana(int value, Action feedback)
         {
             CurrentStats.currentMana += value;
 
             m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName} recovered {value} MP!"));
+                new TextToDisplay($"{EntityName} recovers {value} MP!", feedback));
 
             if (CurrentStats.currentMana > CurrentStats.maxMana)
             {
@@ -148,74 +156,159 @@ namespace Core.Entity
             }
         }
 
-        public void SetManaRegen(int newValue)
+        public void SetManaRegen(int newValue, Action feedback)
         {
             CurrentStats.manaRegen = newValue;
 
             m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName}'s MP regeneration set to {newValue}!"));
+                new TextToDisplay($"{EntityName}'s MP regeneration set to {newValue}!", feedback));
         }
 
-        public void SetArmor(int newValue)
+        public void SetArmor(int newValue, Action feedback)
         {
             CurrentStats.armor = newValue;
 
             m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName}'s armor set to {newValue}!"));
+                new TextToDisplay($"{EntityName}'s armor set to {newValue}!", feedback));
         }
 
-        public void SetAccuracy(int newValue)
+        public void SetAccuracy(int newValue, Action feedback)
         {
+            int oldValue = CurrentStats.accuracy;
             CurrentStats.accuracy = newValue;
 
+            int dif = newValue - oldValue;
+
+            if (CurrentStats.accuracy < 0)
+            {
+                CurrentStats.accuracy = 0;
+            }
+
+            if (CurrentStats.accuracy > 100)
+            {
+                CurrentStats.accuracy = 100;
+            }
+
             m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName}'s accuracy set to {newValue}!"));
+                dif > 0
+                    ? new TextToDisplay($"{EntityName} gained {dif} accuracy point!", feedback)
+                    : new TextToDisplay($"{EntityName} lost {dif} accuracy point!", feedback));
         }
 
-        public void SetAgility(int newValue)
+        public void SetAgility(int newValue, Action feedback)
         {
+            int oldValue = CurrentStats.agility;
             CurrentStats.agility = newValue;
 
-            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName}'s agility set to {newValue}!"));
-        }
+            int dif = newValue - oldValue;
 
-        public void SetIntelligence(int newValue)
-        {
-            CurrentStats.intelligence = newValue;
+            if (CurrentStats.agility < 0)
+            {
+                CurrentStats.agility = 0;
+            }
+
+            if (CurrentStats.agility > 100)
+            {
+                CurrentStats.agility = 100;
+            }
 
             m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName}'s intelligence set to {newValue}!"));
+                dif > 0
+                    ? new TextToDisplay($"{EntityName} gained {dif} agility point!", feedback)
+                    : new TextToDisplay($"{EntityName} lost {dif} agility point!", feedback));
         }
 
         protected virtual void Kill()
         {
-            Action feedback = m_gm.fightManager.EnemyDeathFeedback;
-            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName} has been defeated!", feedback));
         }
 
         public void Regenerate()
         {
             // HP
-            CurrentStats.currentHp += CurrentStats.hpRegen;
-            if (CurrentStats.currentHp > CurrentStats.maxHp) CurrentStats.currentHp = CurrentStats.maxHp;
-
+            if (CurrentStats.hpRegen > 0)
+            {
+                if (CurrentStats.currentHp + CurrentStats.hpRegen <=  CurrentStats.maxHp)
+                {
+                    m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                        new TextToDisplay($"{EntityName} regenerated {CurrentStats.hpRegen} HP!"));
+                }
+                else if (CurrentStats.currentHp < CurrentStats.maxHp)
+                {
+                    int dif = CurrentStats.maxHp - CurrentStats.currentHp;
+                    m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                        new TextToDisplay($"{EntityName} regenerated {dif} HP!"));
+                }
+                
+                CurrentStats.currentHp += CurrentStats.hpRegen;
+                if (CurrentStats.currentHp > CurrentStats.maxHp) CurrentStats.currentHp = CurrentStats.maxHp;
+              
+            }
+            
             // Mana
-            CurrentStats.currentMana += CurrentStats.manaRegen;
-            if (CurrentStats.currentMana > CurrentStats.maxMana) CurrentStats.currentMana = CurrentStats.maxMana;
+            if (CurrentStats.manaRegen > 0)
+            {
+                if (CurrentStats.currentMana + CurrentStats.manaRegen <=  CurrentStats.maxMana)
+                {
+                    m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                        new TextToDisplay($"{EntityName} regenerated {CurrentStats.manaRegen} MP!"));
+                }
+                else if (CurrentStats.currentMana < CurrentStats.maxMana)
+                {
+                    int dif = CurrentStats.maxMana - CurrentStats.currentMana;
+                    m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                        new TextToDisplay($"{EntityName} regenerated {dif} MP!"));
+                }
+                
+                CurrentStats.currentMana += CurrentStats.manaRegen;
+                if (CurrentStats.currentMana > CurrentStats.maxMana) CurrentStats.currentMana = CurrentStats.maxMana;
+            }
         }
 
         public void SetStatus(EEntityStatus newStatus)
         {
             CurrentStatus = newStatus;
+
+            switch (newStatus)
+            {
+                case EEntityStatus.Asleep:
+                    turnBeingAsleep = 0;
+                    break;
+            }
         }
 
         public void CastAbility(AbilityData ability, Entity target)
         {
-            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
-                new TextToDisplay($"{EntityName} cast {ability.ability.ToString()} on {target.EntityName}!"));
+            if (HasStatus(EEntityStatus.Asleep))
+            {
+                switch (turnBeingAsleep)
+                {
+                    case < 3:
+                        m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                            new TextToDisplay($"{EntityName} is asleep!"));
+                        turnBeingAsleep++;
+                        return;
+                    case 3:
+                        m_gm.uiManager.TextArea.AddTextToDisplayQueue(new TextToDisplay($"{EntityName} wakes up!"));
+                        target.SetStatus(target.CurrentStatus & ~EEntityStatus.Asleep);
+                        break;
+                }
+            }
 
+            if (CurrentStats.currentMana < ability.manaCost)
+            {
+                m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                    new TextToDisplay($"{EntityName} has not enough mana to cast {ability.abilityName}!"));
+                return;
+            }
+
+            m_gm.uiManager.TextArea.AddTextToDisplayQueue(
+                new TextToDisplay($"{EntityName} cast {ability.abilityName} on {target.EntityName}!"));
+
+            if (ability.manaCost > 0)
+            {
+                UseMana(ability.manaCost);
+            }
+            
             // Miss (Accuracy)
             if (Random.Range(1, 101) > CurrentStats.accuracy)
             {
@@ -243,54 +336,50 @@ namespace Core.Entity
                             target.SetStatus(target.CurrentStatus | abilityEffect.targetedStatus);
                             m_gm.uiManager.TextArea.AddTextToDisplayQueue(
                                 new TextToDisplay(
-                                    $"{EntityName} makes {target.EntityName} {abilityEffect.targetedStatus.ToString()}"));
+                                    $"{EntityName} makes {target.EntityName} {abilityEffect.targetedStatus.ToString()}!"));
                             break;
                         case EAbilityEffect.RemoveStatus:
                             target.SetStatus(target.CurrentStatus & ~abilityEffect.targetedStatus);
                             m_gm.uiManager.TextArea.AddTextToDisplayQueue(
                                 new TextToDisplay(
-                                    $"{target.EntityName} is no longer {abilityEffect.targetedStatus.ToString()}"));
+                                    $"{target.EntityName} is no longer {abilityEffect.targetedStatus.ToString()}!"));
                             break;
                     }
             }
         }
 
-        public void UpdateStat(EEntityStats stat, int modifierValue, Action feedbackOnDamageReceive = null)
+        public virtual void UpdateStat(EEntityStats stat, int modifierValue, Action feedback = null)
         {
             switch (stat)
             {
                 case EEntityStats.MaxHealth:
-                    SetMaxHp(CurrentStats.maxHp + modifierValue);
+                    SetMaxHp(CurrentStats.maxHp + modifierValue, feedback);
                     break;
                 case EEntityStats.Health:
-                    if (modifierValue >= 0) Heal(modifierValue);
-                    else ApplyDamage(-modifierValue, 
-                        feedbackOnDamageReceive); // -value cuz ApplyDamage() takes positive inputs
+                    if (modifierValue >= 0) Heal(modifierValue, feedback);
+                    else ApplyDamage(-modifierValue, feedback); // -value cuz ApplyDamage() takes positive inputs
                     break;
                 case EEntityStats.HealthRegen:
-                    SetHpRegen(CurrentStats.hpRegen + modifierValue);
+                    SetHpRegen(CurrentStats.hpRegen + modifierValue, feedback);
                     break;
                 case EEntityStats.MaxMana:
-                    SetMaxMana(CurrentStats.maxMana + modifierValue);
+                    SetMaxMana(CurrentStats.maxMana + modifierValue, feedback);
                     break;
                 case EEntityStats.Mana:
-                    if (modifierValue >= 0) RecoverMana(modifierValue);
+                    if (modifierValue >= 0) RecoverMana(modifierValue, feedback);
                     else UseMana(-modifierValue); // -value cuz UseMana() takes positive inputs
                     break;
                 case EEntityStats.ManaRegen:
-                    SetManaRegen(CurrentStats.manaRegen + modifierValue);
+                    SetManaRegen(CurrentStats.manaRegen + modifierValue, feedback);
                     break;
                 case EEntityStats.Armor:
-                    SetArmor(CurrentStats.armor + modifierValue);
+                    SetArmor(CurrentStats.armor + modifierValue, feedback);
                     break;
                 case EEntityStats.Accuracy:
-                    SetAccuracy(CurrentStats.accuracy + modifierValue);
+                    SetAccuracy(CurrentStats.accuracy + modifierValue, feedback);
                     break;
                 case EEntityStats.Agility:
-                    SetAgility(CurrentStats.agility + modifierValue);
-                    break;
-                case EEntityStats.Intelligence:
-                    SetIntelligence(CurrentStats.intelligence + modifierValue);
+                    SetAgility(CurrentStats.agility + modifierValue, feedback);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -314,8 +403,6 @@ namespace Core.Entity
         [Space] public int accuracy;
 
         [Space] public int agility;
-
-        [Space] public int intelligence;
     }
 
     [Flags]
@@ -336,6 +423,5 @@ namespace Core.Entity
         Armor,
         Accuracy,
         Agility,
-        Intelligence,
     }
 }

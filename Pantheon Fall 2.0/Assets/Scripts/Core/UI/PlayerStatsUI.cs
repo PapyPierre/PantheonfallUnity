@@ -14,7 +14,6 @@ namespace Core.UI
         [SerializeField] private Image[] playerManaIndicators;
         [SerializeField] private TextMeshProUGUI acrTmp;
         [SerializeField] private TextMeshProUGUI agiTmp;
-        [SerializeField] private TextMeshProUGUI intTmp;
 
         public void SetPlayerRef(Player player)
         {
@@ -35,9 +34,7 @@ namespace Core.UI
             
             acrTmp.gameObject.SetActive(false);
             agiTmp.gameObject.SetActive(false);
-            intTmp.gameObject.SetActive(false);
         }
-            
         
         public void UpdateAllPlayerStats()
         {
@@ -45,7 +42,6 @@ namespace Core.UI
             UpdatePlayerMana();
             UpdatePlayerAcr();
             UpdatePlayerAgi();
-            UpdatePlayerInt();
         }
         
         public void UpdatePlayerHp()
@@ -113,12 +109,6 @@ namespace Core.UI
         {
             agiTmp.gameObject.SetActive(true);
             agiTmp.text = $"AGI: {m_player.CurrentStats.agility}%";   
-        }
-        
-        public void UpdatePlayerInt()
-        {
-            intTmp.gameObject.SetActive(true);
-            intTmp.text = $"INT: {m_player.CurrentStats.intelligence}";   
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using Core.Entity;
+using Core.Entity.Ability;
 using Core.Upgrade;
 using TMPro;
 using UnityEngine;
@@ -73,7 +74,9 @@ namespace Core.UI
                 
                 if (bonus.UnlockAbility())
                 {
-                    descriptionText.text += $"Unlock {bonus.ability.ToString()}\n";
+                    AbilityData abilityData = DataManager.GetData<AbilityData>(bonus.ability.ToString());
+                    
+                    descriptionText.text += $"Unlock {abilityData.abilityName}\n";
                 }
             }
         }
