@@ -16,6 +16,8 @@ namespace Core
 
         private readonly List<GameObject> m_dontDestroyOnLoadObjects = new();
         
+        [HideInInspector] public bool gameIsStarted;
+        
         #region Initialization
         
         private async void Awake()
@@ -31,7 +33,7 @@ namespace Core
             
             Application.targetFrameRate = 120;
 
-            await SceneManager.LoadSceneAsync("GameScene");
+            await SceneManager.LoadSceneAsync("MainMenuScene");
         }
 
         public void AddToDontDestroyOnLoad(GameObject go) => m_dontDestroyOnLoadObjects.Add(go);

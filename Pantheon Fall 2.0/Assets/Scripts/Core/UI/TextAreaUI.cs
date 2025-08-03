@@ -22,12 +22,14 @@ namespace Core.UI
         
         public bool IsShowingActions { get; private set; }
 
-        private void Start()
+        private void Awake()
         {
             m_gm = GameManager.instance;
-            
             textTMP.text = string.Empty;
-            
+        }
+
+        private void Start()
+        {           
             ShowIntroText();
         }
 

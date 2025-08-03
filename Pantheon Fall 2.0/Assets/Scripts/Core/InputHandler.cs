@@ -14,7 +14,7 @@ namespace Core
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && m_gm.gameIsStarted)
             {
                 if (!GameManager.instance.uiManager.TextArea.IsShowingActions)
                 {

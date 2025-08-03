@@ -19,6 +19,11 @@ namespace Core
             IntroTextFinished += OnIntroFinished;
         }
 
+        private void Start()
+        {
+            GameManager.instance.gameIsStarted = true;
+        }
+
         private void OnIntroFinished()
         {
             Debug.Log("Intro Finished");
